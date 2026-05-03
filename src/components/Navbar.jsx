@@ -20,6 +20,30 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
     fetchData();
   }, []);
 
+const handleChange = async (value) => {
+  setInput(value);
+
+  if (value.length < 1) {
+    setShowSearchResults(false);
+    setSearchResults([]);
+    setNoResults(false);
+    return;
+  }
+
+  setShowSearchResults(true);
+
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/products/search?keyword=${value}`
+    );
+
+    setSearchResults(response.data);
+    setNoResults(response.data.length === 0);
+  } catch (error) {
+    console.error("Error searching:", error);
+  }
+};
+
   const fetchData = async (value) => {
     try {
       const response = await axios.get("http://localhost:8080/api/products");
@@ -30,26 +54,26 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
     }
   };
 
-  const handleChange = async (value) => {
-    setInput(value);
-    if (value.length >= 1) {
-      setShowSearchResults(true)
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/products/search?name=${value}`
-      );
-      setSearchResults(response.data);
-      setNoResults(response.data.length === 0);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error searching:", error);
-    }
-    } else {
-      setShowSearchResults(false);
-      setSearchResults([]);
-      setNoResults(false);
-    }
-  };
+  // const handleChange = async (value) => {
+  //   setInput(value);
+  //   if (value.length >= 1) {
+  //     setShowSearchResults(true)
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:8080/api/products/search?name=${value}`
+  //     );
+  //     setSearchResults(response.data);
+  //     setNoResults(response.data.length === 0);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error("Error searching:", error);
+  //   }
+  //   } else {
+  //     setShowSearchResults(false);
+  //     setSearchResults([]);
+  //     setNoResults(false);
+  //   }
+  // };
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     onSelectCategory(category);
